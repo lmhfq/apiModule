@@ -1,8 +1,10 @@
 # apiModule
-
-
+``` json
+    "require": {
+        "lmhdxa/apiModule":  "*"
+    }
 ```
-	
+``` php
 <?php
 namespace Test;
 use ApiResponse\ApiResponse;
