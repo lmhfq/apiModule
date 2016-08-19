@@ -85,6 +85,9 @@ CREATE TABLE `prefix_apps` (
     - 命名字母按功能或模块从大到小划分，依次编写；如后台用户修改密码：'admin.user.password.update'
     - 字母最后单词为操作。查询:`get`;新增:`add`;更新:`update`;删除:`delete`;上传:`upload`;等
     - 第一位是分组 案例中使用了open分组 open.xx.xx
+    
+    
+#### API DEMO 示例
 
 ``` php
 <?php
