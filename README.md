@@ -1,9 +1,11 @@
 # apiModule
-
+``` json
+   composer require lmh/api-module
+```
 
 ``` json
     "require": {
-        "lmhdxa/apiModule":  "*"
+        "lmh/api-module":  "*"
     }
 ```
 
