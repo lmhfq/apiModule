@@ -3,6 +3,7 @@
   "description": "an api module",
   "type": "project",
   "license": "MTI",
+ "keywords": ["api", "module"],
   "authors": [
     {
       "name": "LiMinghua",
