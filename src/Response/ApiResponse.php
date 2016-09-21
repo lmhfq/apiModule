@@ -82,8 +82,8 @@ class ApiResponse
         $rules = [
             'app_id' => 'required',
             'method' => 'required',
-            'format' => 'json',
-            'sign_method' => 'md5',
+            //'format' => 'json',
+            //'sign_method' => 'md5',
             'nonce' => 'required',
             'sign' => 'required',
             //'biz_content'=>'required'
@@ -91,8 +91,8 @@ class ApiResponse
         $msg = [
             'app_id' => '1001',
             'method' => '1003',
-            'format' => '1004',
-            'sign_method' => '1005',
+            //'format' => '1004',
+           // 'sign_method' => '1005',
             'nonce' => '1010',
             'sign' => '1006',
             //'biz_content'=>'400'
