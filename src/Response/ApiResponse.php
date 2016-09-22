@@ -254,7 +254,8 @@ class ApiResponse
      */
     public function setParams()
     {
-        $this->params = json_decode(isset($GLOBALS['HTTP_RAW_POST_DATA']) ? $GLOBALS['HTTP_RAW_POST_DATA'] : '', true);
+        $this->params = json_decode(file_get_contents('php://input'), true);
+        //$this->params = json_decode(isset($GLOBALS['HTTP_RAW_POST_DATA']) ? $GLOBALS['HTTP_RAW_POST_DATA'] : '', true);
     }
 
     /**
