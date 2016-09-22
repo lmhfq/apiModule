@@ -106,7 +106,7 @@ class ApiResponse
         }
         // A.2 赋值对象
         $this->format = !empty($this->params['format']) ? $this->params['format'] : $this->format;
-        $this->signMethod = !empty($this->params['sign_method']) ? $this->params['sign_method'] : $this->sign_method;
+        $this->signMethod = !empty($this->params['sign_method']) ? $this->params['sign_method'] : $this->signMethod;
         $this->appId = $this->params['app_id'];
         $this->method = $this->params['method'];
 
