@@ -59,7 +59,7 @@ CREATE TABLE `prefix_apps` (
 
 - 对所有API请求参数（包括公共参数和请求参数，但除去`sign`参数），根据参数名称的ASCII码表的顺序排序。如：`foo=1, bar=2, foo_bar=3, foobar=4`排序后的顺序是`bar=2, foo=1, foo_bar=3, foobar=4`。
 - 将排序好的参数名和参数值拼装在一起，根据上面的示例得到的结果为：bar=2&foo=1&foo_ba=3&foobar=4。
-- 把拼装好的字符串采用utf-8编码，使用签名算法对编码后的字节流进行摘要。如果使用`MD5`算法，则需要在拼装的字符串前后加上app的`secret`后，再进行摘要，如：md5(secret+bar=2&foo=1&foo_bar=3&foobar=4+secret)
+- 把拼装好的字符串采用utf-8编码，使用签名算法对编码后的字节流进行摘要。如果使用`MD5`算法，则需要在拼装的字符串后加上app的`secret`后，再进行摘要，如：md5(bar=2&foo=1&foo_bar=3&foobar=4+secret)
 - 将摘要得到的字节结果使用大写表示
 
 #### 返回结果
