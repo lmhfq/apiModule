@@ -44,8 +44,8 @@ CREATE TABLE `prefix_apps` (
 |----|----|----|----|
 |app_id|string|是|应用ID|
 |method|string|是|接口名称|
-|format|string|否|回调格式，默认：json（目前仅支持）|
-|sign_method|string|否|签名类型，默认：md5（目前仅支持）|
+|format|string|否|回调格式，默认：json（目前仅支持json）|
+|sign_method|string|否|签名类型，默认：md5（目前仅支持 md5 ,rsa）|
 |nonce|string|是|随机字符串，长度1-32位任意字符|
 |sign|string|是|签名字符串，参考[签名规则](#签名规则)|
 
