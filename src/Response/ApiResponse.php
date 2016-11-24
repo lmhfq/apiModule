@@ -32,10 +32,17 @@ class ApiResponse
     protected $appId;
 
     /**
+     * md5方式的支付签名密钥
      * app_secret
      * @var string
      */
     protected $appSecret;
+
+    /**
+     * rsa方式的支付签名密钥
+     * @var
+     */
+    protected $rsaPrivateKey;
 
     /**
      * 回调数据格式
@@ -82,22 +89,22 @@ class ApiResponse
         $rules = [
             'app_id' => 'required',
             'method' => 'required',
-            //'format' => 'json',
+            // 'format' => 'json',
             //'sign_method' => 'md5',
             'nonce' => 'required',
             'sign' => 'required',
-            //'biz_content'=>'required'
+            'biz_content' => 'required'
         ];
         $msg = [
             'app_id' => '1001',
-            'method' => '1003',
+            //'method' => '1003',
             //'format' => '1004',
-           // 'sign_method' => '1005',
+            'sign_method' => '1005',
             'nonce' => '1010',
             'sign' => '1006',
-            //'biz_content'=>'400'
+            'biz_content' => '400'
         ];
-        if(!$this->params){
+        if (!$this->params) {
             return $this->response(['status' => false, 'code' => '402']);
         }
         $messages = static::validator($this->params, $rules, $msg);
@@ -123,12 +130,12 @@ class ApiResponse
         $classPath = $this->groupNameSpace . '\\' . $this->group . '\\' . $className;
 
         if (!$className || !class_exists($classPath)) {
-            return $this->response(['status' => false, 'code' => '500']);
+            return $this->response(['status' => false, 'code' => '1020']);
         }
 
         // D.3 判断方法是否存在
         if (!method_exists($classPath, 'run')) {
-            return $this->response(['status' => false, 'code' => '500']);
+            return $this->response(['status' => false, 'code' => '1008']);
         }
         // E. api接口分发
         $class = new $classPath;
@@ -163,8 +170,16 @@ class ApiResponse
      */
     protected function generateSign($params)
     {
-        if ($this->signMethod == 'md5') {
+        if (strtolower($this->signMethod) == 'md5') {
+            if (!$this->appSecret) {
+                return false;
+            }
             return $this->generateMd5Sign($params);
+        } elseif (strtolower($this->signMethod) == 'rsa') {
+            if (!$this->rsaPrivateKey) {
+                return false;
+            }
+            return $this->generateRSASign($params);
         }
         return false;
     }
@@ -176,16 +191,36 @@ class ApiResponse
      */
     protected function generateMd5Sign($params)
     {
+        $string = $this->getSignParams($params) . $this->appSecret;
+        return strtoupper(md5($string));
+    }
+
+
+    protected function getSignParams($params)
+    {
         ksort($params);
 
         $attachString = "";
         foreach ($params as $k => $v) {
             $attachString .= $k . "=" . trim($v) . "&";
         }
-        $string = trim($attachString, "&") . $this->appSecret;
-        return strtoupper(md5($string));
+        return trim($attachString, "&");
     }
 
+    /**
+     * rsa方式签名
+     * @param $params
+     * @return string
+     */
+    public function generateRSASign($params)
+    {
+        $params = $this->getSignParams($params);
+        $priKey = $this->rsaPrivateKey;
+        $res = openssl_get_privatekey($priKey);
+        openssl_sign($params, $sign, $res);
+        openssl_free_key($res);
+        return base64_encode($sign);
+    }
 
     /**
      * 通过方法名转换为对应的类名
@@ -199,12 +234,28 @@ class ApiResponse
             return false;
         }
         //第一段作为接口分组
-        $this->group = array_shift($methods);
+        $this->group = ucwords(array_shift($methods));
         $tmp = array();
         foreach ($methods as $value) {
             $tmp[] = ucwords($value);
         }
         return implode('', $tmp);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRsaPrivateKey()
+    {
+        return $this->rsaPrivateKey;
+    }
+
+    /**
+     * @param mixed $rsaPrivateKey
+     */
+    public function setRsaPrivateKey($rsaPrivateKey)
+    {
+        $this->rsaPrivateKey = $rsaPrivateKey;
     }
 
     /**
@@ -255,7 +306,6 @@ class ApiResponse
     public function setParams()
     {
         $this->params = json_decode(file_get_contents('php://input'), true);
-        //$this->params = json_decode(isset($GLOBALS['HTTP_RAW_POST_DATA']) ? $GLOBALS['HTTP_RAW_POST_DATA'] : '', true);
     }
 
     /**
