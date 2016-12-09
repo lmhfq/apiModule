@@ -234,7 +234,7 @@ class ApiResponse
             return false;
         }
         //第一段作为接口分组
-        $this->group = ucwords(array_shift($methods));
+        $this->group = array_shift($methods);
         $tmp = array();
         foreach ($methods as $value) {
             $tmp[] = ucwords($value);
