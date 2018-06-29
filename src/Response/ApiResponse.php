@@ -123,14 +123,13 @@ class ApiResponse
             return $this->response(['status' => false, 'code' => $signRes['code']]);
         }
         // D. 校验接口名
-        // D.1 通过方法名获取类名
-        $className = $this->getClassName($this->method);
-
-        // D.2 判断类名是否存在
-        $classPath = $this->groupNameSpace . '\\' . $this->group . '\\' . $className;
         try {
+            // D.1 通过方法名获取类名
+            $className = $this->getClassName($this->method);
+            // D.2 判断类名是否存在
+            $classPath = $this->groupNameSpace . '\\' . $this->group . '\\' . $className;
             $reflect = new \ReflectionClass($classPath);
-        } catch (\ReflectionException $e) {
+        } catch (\Exception  $e) {
             return $this->response(['status' => false, 'code' => '1020']);
         }
         // D.3 判断方法是否存在
@@ -226,18 +225,22 @@ class ApiResponse
      * 通过方法名转换为对应的类名
      * @param  string $method 方法名
      * @return string|false
+     * @throws \Exception
      */
     protected function getClassName($method)
     {
         $methods = explode('.', $method);
         if (!is_array($methods)) {
-            return false;
+            throw new \Exception("method 参数不合法");
         }
         //第一段作为接口分组
         $this->group = array_shift($methods);
         $tmp = array();
         foreach ($methods as $value) {
             $tmp[] = ucwords($value);
+        }
+        if (count($tmp) == 0) {
+            throw new \Exception("method 参数不含不存在方法名称");
         }
         return implode('', $tmp);
     }
