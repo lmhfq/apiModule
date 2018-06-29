@@ -128,18 +128,18 @@ class ApiResponse
 
         // D.2 判断类名是否存在
         $classPath = $this->groupNameSpace . '\\' . $this->group . '\\' . $className;
-
-        if (!$className || !class_exists($classPath)) {
+        try {
+            $reflect = new \ReflectionClass($classPath);
+        } catch (\ReflectionException $e) {
             return $this->response(['status' => false, 'code' => '1020']);
         }
-
         // D.3 判断方法是否存在
-        if (!method_exists($classPath, 'run')) {
+        if (!$reflect->hasMethod('run')) {
             return $this->response(['status' => false, 'code' => '1008']);
         }
         // E. api接口分发
-        $class = new $classPath;
-        return $this->response((array)$class->run($this->params));
+        $data = $reflect->getMethod('run')->invokeArgs($reflect->newInstance(), $this->params);
+        return $this->response($data);
     }
 
     /**
